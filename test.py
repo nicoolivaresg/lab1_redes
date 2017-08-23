@@ -35,17 +35,31 @@ def plotSpectrum(y,Fs):
  			maxFreqIr = i
  			break
 
- 	left = maxFreqIl + 1
- 	right = maxFreqIr - 1
+ 	left = int(maxFreqIl - (n*0.15))
+ 	right = int(maxFreqIl + (n*0.15))
+ 	print(left, right, n +left)
 
- 	shortSpectrum = Y
+ 	shortSpectrum = np.array([0]*n)
+ 	"""
  	for i in range(int(n/2)):
  		if i > left:
  			shortSpectrum[i] = 0
 
  	for i in range(int(n/2)+1, n):
  		if i < right:
- 			shortSpectrum[i] = 0
+ 			shortSpectrum[i] = 0"""
+ 	"""
+ 	for i in range(n):
+ 		if(i < left or i > right):
+ 			shortSpectrum[i] = 0"""
+
+ 	for i in range(right):
+ 		shortSpectrum[i] = Y[i]
+
+ 	for j in range(n+left, n):
+ 		shortSpectrum[j] = Y[j]
+
+ 	print(len(shortSpectrum), len(y))
 
  	plot(frq, abs(shortSpectrum), 'r')
  	xlabel('Frecuencia (Hz)')
