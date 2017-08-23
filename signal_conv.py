@@ -9,23 +9,23 @@ import re
 
 ####### Constantes y variables globales #######
 
-TITLE1 = "a"
-TITLE2 = "b"
-TITLE3 = "c"
-TITLE4 = "d"
-TITLE5 = "e"
+TITLE1 = "Gráfico de audio en el tiempo"
+TITLE2 = "Gráfico del audio en el dominio de la frecuencia"
+TITLE3 = "Gráfico del audio en el tiempo usando la transformada inversa"
+TITLE4 = "Gráfico en el dominio de la frecuencia con fft truncada en un 15%"
+TITLE5 = "Gráfico del audio en el tiempo usando la transformada truncada inversa"
 
-XLABEL1 = "aa"
-XLABEL2 = "bb"
-XLABEL3 = "cc"
-XLABEL4 = "dd"
-XLABEL5 = "ee"
+XLABEL1 = "Tiempo [s]"
+XLABEL2 = "Frecuencia [Hz]"
+XLABEL3 = "Tiempo [s]"
+XLABEL4 = "Frecuencia [Hz]"
+XLABEL5 = "Tiempo [s]"
 
-YLABEL1 = "aaa"
-YLABEL2 = "bbb"
-YLABEL3 = "ccc"
-YLABEL4 = "ddd"
-YLABEL5 = "eee"
+YLABEL1 = "Amplitud"
+YLABEL2 = "Amplitud [dB]"
+YLABEL3 = "Amplitud"
+YLABEL4 = "Amplitud [dB]"
+YLABEL5 = "Amplitud"
 
 DPI = 100
 FIGURE_WIDTH = 8
@@ -119,10 +119,10 @@ def processFile(filename):
 	fftTruncadaInversa = fourierInverse(fftTruncada)
 
 	graficar(str(figureCounter) + "-1.png", TITLE1, YLABEL1, XLABEL1, datos, times)
-	graficar(str(figureCounter) + "-2.png", TITLE1, YLABEL1, XLABEL1, abs(fftNormalizada), fftSamples)
-	graficar(str(figureCounter) + "-3.png", TITLE1, YLABEL1, XLABEL1, fftNormalizadaInversa, times)
-	graficar(str(figureCounter) + "-4.png", TITLE1, YLABEL1, XLABEL1, abs(fftTruncada), fftSamples)
-	graficar(str(figureCounter) + "-5.png", TITLE1, YLABEL1, XLABEL1, fftTruncadaInversa, times)
+	graficar(str(figureCounter) + "-2.png", TITLE2, YLABEL2, XLABEL2, abs(fftNormalizada), fftSamples)
+	graficar(str(figureCounter) + "-3.png", TITLE3, YLABEL3, XLABEL3, fftNormalizadaInversa, times)
+	graficar(str(figureCounter) + "-4.png", TITLE4, YLABEL4, XLABEL4, abs(fftTruncada), fftSamples)
+	graficar(str(figureCounter) + "-5.png", TITLE5, YLABEL5, XLABEL5, fftTruncadaInversa, times)
 
 	write(filename[:len(filename)-4] + "-inversed.wav", frecuencia, fftTruncadaInversa.astype(datos.dtype))
 
