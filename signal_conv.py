@@ -1,4 +1,4 @@
-##### Importación de librería y funciones ########
+##### Importación de librería y funciones #####
 import numpy as np
 from scipy.io.wavfile import read, write
 from scipy.fftpack import fft, ifft
@@ -38,14 +38,14 @@ figureCounter = 0
 # Funcion que grafica los datos en ydata y xdata, y escribe los nombres del eje x, eje y,
 # y el titulo de una figura. Esta figura la guarda en un archivo con el nombre filename.
 # Entrada:
-#	filename - Nombre del archivo en donde se guarda la figura.
-#	title	 - Titulo de la figura.
-#	ylabel	 - Etiqueta del eje y.
-#	xlabel	 - Etiqueta del eje x.
-#	ydata	 - Datos del eje y.
-#	xdata	 - Datos del eje X, por defecto es un arreglo vacío que luego se cambia por un
-#			   arreglo desde 0 hasta largo de ydata - 1
-#	color	 - Color de la figura en el grafico, por defecto es azul (blue).
+#	filename	- Nombre del archivo en donde se guarda la figura.
+#	title		- Titulo de la figura.
+#	ylabel		- Etiqueta del eje y.
+#	xlabel		- Etiqueta del eje x.
+#	ydata		- Datos del eje y.
+#	xdata		- Datos del eje X, por defecto es un arreglo vacío que luego se cambia por un
+#				  arreglo desde 0 hasta largo de ydata - 1
+#	color		- Color de la figura en el grafico, por defecto es azul (blue).
 def graficar(filename, title, ylabel, xlabel, ydata, xdata=np.array([]), color='b'):
 	if xdata.size == 0:
 		xdata = np.arange(len(ydata))
@@ -58,6 +58,15 @@ def graficar(filename, title, ylabel, xlabel, ydata, xdata=np.array([]), color='
 	plt.savefig(filename, bbox_inches='tight')
 	plt.clf()
 
+# Funcion que usa el read de scipy.io.wavfile para abrir un archivo .wav y obtener la
+# frecuencia y la informacion del sonido, esta funcion ademas obtiene un vector de tiempo
+# dependiendo de la canidad de datos y la frecuencia del audio.
+# Entrada:
+# 	filename	- Nombre del archivo por abrir.
+# Salida:
+#	frecuencia	- Numero entero con la frecuencia de muestreo del audio en [Hz].
+#	datos		- Arreglo numpy con los datos obtenidos por la lectura del archivo.
+#	times		- Arreglo de floats con el tiempo en segundos para cada dato de 'datos'.
 def openWavFile(filename):
 	frecuencia, datos = read(filename)
 	n = len(datos)
@@ -65,6 +74,15 @@ def openWavFile(filename):
 	times = np.linspace(0, Ts, n) # Tiempo en segundos para cada dato de 'datos'
 	return (frecuencia, datos, times)
 
+# Funcion que hace uso de la tranformada de fourier, fft() y fftfreq(), para obtener la
+# secuencia de valores de los datos obtenidos del audio y para obtener las frecuencias
+# de muestreo (que depende de la frecuencia del audio y del largo del audio) respectivamente,
+# Entrada:
+#	data		- Datos obtenidos al leer el archivo de audio con scipy.
+#	frequency	- Numero entero con la frecuencia de muestreo del audio en [Hz].
+# Salida:
+#	fftValues	- Transformada de fourier normalizada para los valores en data.
+#	fftSamples	- Frecuencias de muestreo que dependen del largo del arreglo data y la frequency.
 def fourierTransform(data, frequency):
 	n = len(data)
 	Ts = n / frequency
@@ -73,6 +91,14 @@ def fourierTransform(data, frequency):
 
 	return (fftValues, fftSamples)
 
+# Funcion que trunca en 15% hacia la izquierda y derecha de la frecuencia con mayor amplitud en
+# un arreglo de valores con la transformada de fourier de un audio.
+# Entrada:
+#	fftValues	- Transformada de fourier normalizada para los valores obtenido al leer el archivo
+#				  de audio con scipy.
+# Salida:
+#	fftTruncada	- Transformada de fourier normalizada con los valores que se encuentran fuera del
+#				  margen de 15% seteados en 0.
 def truncateFft(fftValues):
 	n = len(fftValues)
 	maxFreqI = 0
@@ -106,9 +132,29 @@ def truncateFft(fftValues):
 
 	return fftTruncada
 
+# Funcion que retorna la transformada inversa de fourier de un arreglo de valores, se utiliza para
+# devolver la tranformada y la transformada truncada a una señal de audio.
+# Entrada:
+#	fftValues	- Transformada de fourier normalizada para los valores obtenido al leer el archivo
+#				  de audio con scipy.
+# Salida:
+#	fftValuesInverse - Transformada de fourier inversa denormalizada, se puede utilizar para escribir
+#					   un audio utilizando la funcion write de scipy.io.wavfile
 def fourierInverse(fftValues):
 	return ifft(fftValues)*len(fftValues)
 
+# Abre un archivo .wav y guarda los siguientes graficos en archivos .png:
+# 1- Gráfico de audio en el tiempo
+# 2- Gráfico del audio en el dominio de la frecuencia
+# 3- Gráfico del audio en el tiempo usando la transformada inversa
+# 4- Gráfico en el dominio de la frecuencia con fft truncada en un 15%
+# 5- Gráfico del audio en el tiempo usando la transformada truncada inversa
+# 
+# Tambien usa la inversa truncada para crear y guardar el archivo de audio resultante de
+# esta señal.
+# 
+# Entrada:
+#	filename	- Nombre del archivo con extension '.wav' que se quiere procesar.
 def processFile(filename):
 	global figureCounter
 	figureCounter += 1
